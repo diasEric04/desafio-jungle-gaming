@@ -1,0 +1,35 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: wagering
+          POSTGRES_PASSWORD: wagering
+          POSTGRES_DB: wagering
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U wagering" --health-interval 3s --health-timeout 3s --health-retries 20
+      localstack:
+        image: localstack/localstack:3.8
+        env:
+          SERVICES: sqs
+        ports: ['4566:4566']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.1.x
+      - run: bun install
+      - run: bun run typecheck
+      - run: bun run lint
+      - run: bun run test:unit
+      - run: bun run test:integration
+      - run: bun run test:concurrency
