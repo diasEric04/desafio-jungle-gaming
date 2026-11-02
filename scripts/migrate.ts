@@ -1,3 +1,4 @@
+import type { Migrator } from '@mikro-orm/migrations';
 import { MikroORM } from '@mikro-orm/postgresql';
 import { loadConfig } from '@/config/app-config';
 import { createOrmConfig } from '@/infrastructure/persistence/mikro-orm.config';
@@ -10,7 +11,7 @@ async function main(): Promise<void> {
   const [command = 'status', argument] = process.argv.slice(2);
   const config = loadConfig();
   const orm = await MikroORM.init(createOrmConfig(config.database));
-  const migrator = orm.migrator;
+  const migrator = orm.migrator as Migrator;
   try {
     switch (command) {
       case 'up': {

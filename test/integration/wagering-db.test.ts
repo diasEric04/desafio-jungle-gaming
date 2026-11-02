@@ -109,7 +109,7 @@ describe('atomicity against real PostgreSQL', () => {
   test('a processed BET commits transaction, wallet, ledger and events in one go', async () => {
     const { wallet, playerId } = await openWallet('100.00');
     const result = await submit(wallet.id, playerId, K.Bet, '25.00', `bet-${newId()}`);
-    expect(result.status).toBe('PROCESSED');
+    expect<string>(result.status).toBe('PROCESSED');
     const { rows } = await client.query(
       `SELECT w.balance::text AS balance, w.version,
               (SELECT COUNT(*) FROM wallet_ledger_entries WHERE wallet_id = w.id AND direction = 'DEBIT')::int AS debits,
@@ -196,7 +196,7 @@ describe('out-of-order references with the real worker path', () => {
     const refund = await submit(wallet.id, playerId, K.Refund, '40.00', `ref-${newId()}`, {
       referenceExternalTransactionId: bet,
     });
-    expect(refund.status).toBe('PENDING_REFERENCE');
+    expect<string>(refund.status).toBe('PENDING_REFERENCE');
 
     await submit(wallet.id, playerId, K.Bet, '40.00', bet);
     const claims = await waitFor(
@@ -245,7 +245,7 @@ describe('out-of-order references with the real worker path', () => {
         correlationId: 'it',
         source: 'http',
       });
-      expect(r.status).toBe('PENDING_REFERENCE');
+      expect<string>(r.status).toBe('PENDING_REFERENCE');
       for (let i = 0; i < 2; i++) {
         await new Promise((res) => setTimeout(res, 20));
         for (const c of (await short.useCases.claimPendingReferences.execute(50)).filter(

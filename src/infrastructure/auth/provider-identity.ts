@@ -8,7 +8,9 @@ import type { ProviderIdentity, ProviderIdentityPort } from '@/application/ports
  * submit transactions for its own `providerId`.
  */
 export class AllowAllProviderIdentity implements ProviderIdentityPort {
-  async authenticate(): Promise<ProviderIdentity> {
+  async authenticate(
+    _headers: Readonly<Record<string, string | string[] | undefined>>,
+  ): Promise<ProviderIdentity> {
     return { providerId: undefined };
   }
 }

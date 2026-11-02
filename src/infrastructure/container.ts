@@ -36,6 +36,7 @@ import { MikroOrmWalletRepository } from './persistence/repositories/wallet.repo
 import { MikroOrmUnitOfWork } from './persistence/unit-of-work';
 import { OutboxPublisherWorker, PendingReferenceWorker } from './workers/background-workers';
 import { AllowAllProviderIdentity } from './auth/provider-identity';
+import type { ProviderIdentityPort } from '@/application/ports/services';
 
 export interface ContainerOptions {
   /** Skip SQS entirely (database-only tests). Disables consumer, outbox publisher and the SQS readiness check. */
@@ -199,7 +200,7 @@ export async function createContainer(config: AppConfig, options: ContainerOptio
     useCases,
     publishOutbox,
     readiness,
-    providerIdentity: new AllowAllProviderIdentity(),
+    providerIdentity: new AllowAllProviderIdentity() as ProviderIdentityPort,
 
     start(): void {
       outboxWorker?.start();

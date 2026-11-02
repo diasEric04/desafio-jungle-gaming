@@ -1,8 +1,12 @@
 import { describe, expect, test } from 'bun:test';
-import { classifyDbError, isRetryableInTransaction } from '@/infrastructure/persistence/db-errors';
+import {
+  classifyDbError,
+  isRetryableInTransaction,
+  type DbErrorKind,
+} from '@/infrastructure/persistence/db-errors';
 
 describe('classifyDbError', () => {
-  test.each([
+  test.each<[string, DbErrorKind]>([
     ['40P01', 'deadlock'],
     ['40001', 'serialization'],
     ['55P03', 'lock_timeout'],
