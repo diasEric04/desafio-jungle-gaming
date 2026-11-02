@@ -90,7 +90,15 @@ export interface CreateOpeningTransactionProps {
   createdAt: Date;
 }
 
-const IDENTIFIER_PATTERN = /^[^\u0000-\u001f\u007f]+$/u;
+/** True when the string is non-empty and has no ASCII control characters (checked by code point, no control-char regex). */
+function isPrintableIdentifier(value: string): boolean {
+  if (value.length === 0) return false;
+  for (let i = 0; i < value.length; i += 1) {
+    const code = value.charCodeAt(i);
+    if (code <= 0x1f || code === 0x7f) return false;
+  }
+  return true;
+}
 const HASH_PATTERN = /^[a-f0-9]{64}$/;
 const MAX_IDENTIFIER_LENGTH = 128;
 const MAX_IDEMPOTENCY_KEY_LENGTH = 256;
@@ -101,7 +109,7 @@ function assertIdentifier(name: string, value: unknown, maxLength = MAX_IDENTIFI
     value.length === 0 ||
     value.length > maxLength ||
     value.trim() !== value ||
-    !IDENTIFIER_PATTERN.test(value)
+    !isPrintableIdentifier(value)
   ) {
     throw new InvalidTransactionError(
       `${name} must be a non-empty string (max ${maxLength} chars, no control chars or surrounding spaces)`,
