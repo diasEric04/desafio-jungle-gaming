@@ -35,9 +35,10 @@ Camadas (dependências apontam para dentro):
 ## 3. Dinheiro
 
 `Money` guarda **`bigint` em centavos** (escala fixa 2) + moeda. Nunca há `number` para valores monetários:
-entrada é string decimal validada (`"12.34"`, no máximo 2 casas; `"1.234"` é 400), saída é string.
-No banco: `BIGINT` em centavos com `CHECK (balance_cents >= 0)`. Operações são checadas (`Money.add/subtract`
-rejeitam moedas diferentes e resultado negativo é erro de domínio).
+entrada é string decimal validada (`"12.34"`, no máximo 2 casas; `"1.234"` é 400) e saída é string.
+No banco os valores são `numeric(20,2)` (exato, sem ponto flutuante), trafegam como string decimal e são
+reconstruídos como `Money` pelos mappers, com `CHECK (balance >= 0)`. Operações são checadas
+(`Money.add/subtract` rejeitam moedas diferentes e resultado negativo é erro de domínio).
 
 ## 4. Estratégia transacional
 

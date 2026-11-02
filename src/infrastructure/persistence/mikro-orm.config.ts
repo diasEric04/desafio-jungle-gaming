@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { defineConfig, PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Migrator } from '@mikro-orm/migrations';
 import type { AppConfig } from '@/config/app-config';
