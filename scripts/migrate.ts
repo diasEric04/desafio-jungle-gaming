@@ -30,8 +30,8 @@ async function main(): Promise<void> {
       }
       case 'status': {
         const [executed, pending] = await Promise.all([
-          migrator.getExecuted(),
-          migrator.getPending(),
+          migrator.getExecutedMigrations(),
+          migrator.getPendingMigrations(),
         ]);
         console.log(`executed: ${executed.map((m) => m.name).join(', ') || '-'}`);
         console.log(`pending:  ${pending.map((m) => m.name).join(', ') || '-'}`);
